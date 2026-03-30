@@ -11,6 +11,15 @@ controlpad uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.1] — 2026-03-30
+
+### Fixed
+- Build backend corrected from `setuptools.backends.legacy:build` to
+  `setuptools.build_meta`, fixing installation on systems with older
+  versions of setuptools (e.g. Raspberry Pi OS Bookworm).
+
+---
+
 ## [0.1.0] — 2026-03-30
 
 Initial release.
@@ -56,5 +65,6 @@ Initial release.
 
 ---
 
-[Unreleased]: https://github.com/ranaweerasupun/controlpad/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ranaweerasupun/controlpad/compare/v0.1.1...HEAD
+[0.1.1]:      https://github.com/ranaweerasupun/controlpad/compare/v0.1.0...v0.1.1
 [0.1.0]:      https://github.com/ranaweerasupun/controlpad/releases/tag/v0.1.0
