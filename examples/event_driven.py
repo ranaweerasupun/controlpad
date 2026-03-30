@@ -25,6 +25,21 @@ def on_left_trigger(value):
     if value > 0.02:
         print(f"L2 trigger  → {value:.2f}")
 
+@gp.on_button_press("l1")
+def on_l1():
+    print("L1 pressed")
+
+@gp.on_button_press("r1")
+def on_r1():
+    print("R1 pressed")
+
+
+@gp.on_axis("r2")
+def on_r2(value):
+    if value > 0.02:   # small threshold to ignore noise at rest
+        print(f"R2 trigger → {value:.2f}")
+
+
 
 @gp.on_button_press("cross")
 def on_cross():
