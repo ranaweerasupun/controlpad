@@ -11,11 +11,13 @@ build/
 .eggs/
 MANIFEST
 
+
 # Virtual environments
 .venv/
 venv/
 env/
 ENV/
+publish_env/
 
 # Testing
 .pytest_cache/
@@ -36,3 +38,4 @@ htmlcov/
 # Distribution / packaging
 *.whl
 *.tar.gz
+dist/
