@@ -11,6 +11,22 @@ controlpad uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.3.0] — 2026-04-08
+
+### Added
+
+**Output Mapping**
+- `Mapper` class — rescales a processed axis value from any source range to any target range
+- `invert` flag — flip the output direction without swapping the target tuple
+- `clamp` option (default `True`) — prevents out-of-range output when a stick is not perfectly zeroed
+- `center_deadband` — snaps output to the exact target midpoint within a configurable band; useful for ESCs sensitive around neutral
+- `Mapper.center` property — returns the exact midpoint of the target range
+- `PWM()` preset — maps to microsecond pulse widths (default 1000–2000 µs); supports `one_sided`, `invert`, and `center_deadband`
+- `SERVO()` preset — maps to degrees (default -90° to +90°); supports `invert` and `center_deadband`
+- `MOTOR()` preset — maps to motor driver byte values (default 0–255); supports `one_sided`, `invert`, and `center_deadband`
+
+---
+
 ## [0.2.1] — 2026-04-08
 
 ### Added
@@ -34,15 +50,6 @@ controlpad uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `Session.save(path)` — serialise a session to human-readable, diff-friendly JSON (format version 1)
 - `Session.load(path)` — deserialise a session; validates format version and rejects corrupt files with clear error messages
 - `recording_playback.py` example — demonstrates the full record → save → load → playback workflow
-
----
-
-## [0.1.1] — 2026-03-30
-
-### Fixed
-- Build backend corrected from `setuptools.backends.legacy:build` to
-  `setuptools.build_meta`, fixing installation on systems with older
-  versions of setuptools (e.g. Raspberry Pi OS Bookworm).
 
 ---
 

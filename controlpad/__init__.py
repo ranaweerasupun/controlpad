@@ -32,6 +32,7 @@ from .profiles import (
     list_profiles,
 )
 from .filters import apply_deadzone, apply_deadzone_2d, apply_expo, ExponentialSmoother
+from .mappers import Mapper, PWM, SERVO, MOTOR
 from .exceptions import (
     ControlpadError,
     NoControllerFound,
@@ -77,6 +78,11 @@ __all__ = [
     "apply_deadzone_2d",
     "apply_expo",
     "ExponentialSmoother",
+    # Mappers
+    "Mapper",
+    "PWM",
+    "SERVO",
+    "MOTOR",
     # Exceptions
     "ControlpadError",
     "NoControllerFound",

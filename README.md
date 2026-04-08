@@ -34,6 +34,7 @@ gp.run()
 - **Headless Linux support** — evdev backend requires no display, works inside ROS nodes and Docker containers
 - **CLI tools** — `controlpad detect`, `controlpad monitor` for quick diagnostics
 - **Session recording & playback** — record live controller input to JSON and replay it without hardware; ideal for testing and simulation
+- **Output mapping** — `Mapper`, `PWM()`, `SERVO()`, `MOTOR()` rescale axis values into any hardware range in one line
 
 ---
 
@@ -53,7 +54,7 @@ To check the installed version:
 
 ```python
 import controlpad
-print(controlpad.__version__)   # e.g. "0.2.0"
+print(controlpad.__version__)   # e.g. "0.3.0"
 ```
 
 ---
@@ -194,7 +195,7 @@ gp.playback(session)              # replays at real-time speed by default
 ### Playback options
 
 ```python
-# real-time (default)
+# Real-time (default)
 gp.playback(session, speed=1.0)
 
 # Double speed
@@ -259,6 +260,100 @@ control. Each snapshot occupies one logical entry in the `snapshots` array:
 Raw hardware values are stored before any profile mapping, deadzone, or
 filtering — so you can replay a recording through a differently-configured
 `Gamepad` and see how your application would have behaved with different settings.
+
+---
+
+## Output Mapping
+
+controlpad's input pipeline delivers clean axis values in `[-1, +1]`.
+The next step is always translating those values into whatever your hardware
+expects — a drone ESC wants microsecond PWM pulses, a servo wants degrees,
+a motor driver wants a byte. `Mapper` handles that translation in one line.
+
+### Basic usage
+
+```python
+from controlpad.mappers import Mapper, PWM, SERVO, MOTOR
+
+pwm   = PWM()     # (-1, 1) → (1000–2000 µs)
+servo = SERVO()   # (-1, 1) → (-90° to +90°)
+motor = MOTOR(min_value=-255, max_value=255)
+
+@gp.on_axis("left_y")
+def on_pitch(value):
+    esc.set_pulse(pwm.scale(value))
+
+@gp.on_axis("right_x")
+def on_rudder(value):
+    rudder.set_angle(servo.scale(value))
+```
+
+### Presets
+
+| Preset | Default output range | One-sided? |
+|---|---|---|
+| `PWM()` | 1000–2000 µs | `one_sided=True` for triggers |
+| `SERVO()` | -90° to +90° | No — always two-sided |
+| `MOTOR()` | 0–255 | `one_sided=True` for throttle-only |
+
+All presets accept `invert` and `center_deadband` keyword arguments.
+
+```python
+# Throttle from a trigger (0 → 1 axis)
+throttle = PWM(one_sided=True)
+throttle.scale(0.0)   # → 1000.0
+throttle.scale(1.0)   # → 2000.0
+
+# Reversed servo channel
+inv_servo = SERVO(invert=True)
+inv_servo.scale(1.0)  # → -90.0°
+
+# Snap to neutral (1500 µs) until stick leaves ±15 µs — avoids ESC chatter
+stable = PWM(center_deadband=15)
+stable.scale(0.01)    # → 1500.0 (snapped)
+stable.scale(0.5)     # → 1750.0
+```
+
+### Custom ranges
+
+```python
+# 900–2100 µs extended PWM range
+wide_pwm = PWM(min_us=900, max_us=2100)
+
+# 10-bit motor driver (0–1023)
+motor_10bit = MOTOR(min_value=0, max_value=1023)
+
+# Fully custom — map trigger (0→1) to voltage (0.0→3.3 V)
+voltage = Mapper(source=(0.0, 1.0), target=(0.0, 3.3))
+```
+
+### Full drone example
+
+```python
+from controlpad import Gamepad
+from controlpad.mappers import PWM
+
+gp = Gamepad(deadzone=0.08, expo=0.15)
+
+pitch    = PWM(center_deadband=10)
+roll     = PWM(center_deadband=10)
+yaw      = PWM(center_deadband=10)
+throttle = PWM(one_sided=True)   # r2 trigger: 0 → 1
+
+@gp.on_axis("left_y")
+def on_pitch(v):    fc.set_channel(1, pitch.scale(v))
+
+@gp.on_axis("left_x")
+def on_roll(v):     fc.set_channel(2, roll.scale(v))
+
+@gp.on_axis("right_x")
+def on_yaw(v):      fc.set_channel(3, yaw.scale(v))
+
+@gp.on_axis("r2")
+def on_throttle(v): fc.set_channel(4, throttle.scale(v))
+
+gp.run()
+```
 
 ---
 
