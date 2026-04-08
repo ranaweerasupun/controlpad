@@ -1,0 +1,108 @@
+[build-system]
+requires      = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# Project metadata
+# ---------------------------------------------------------------------------
+
+[project]
+name            = "controlpad"
+version         = "0.2.0"
+description     = "Cross-platform game controller library for robotics, drones, and edge computing"
+readme          = "README.md"
+license         = { file = "LICENSE" }
+authors         = [
+    { name = "Supun Sriyananda", email = "supunsriyananda@gmail.com" }
+]
+keywords        = [
+    "gamepad", "joystick", "controller", "robotics",
+    "drone", "raspberry-pi", "edge-computing", "i2c"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Hardware",
+    "Topic :: Games/Entertainment",
+]
+requires-python = ">=3.10"
+
+# Core dependency — pygame handles all platforms out of the box
+dependencies = [
+    "pygame>=2.1",
+]
+
+# ---------------------------------------------------------------------------
+# Optional dependencies
+# ---------------------------------------------------------------------------
+
+[project.optional-dependencies]
+
+# Linux headless backend (no display required — Raspberry Pi, Docker, ROS)
+evdev = [
+    "evdev>=1.6; sys_platform == 'linux'",
+]
+
+# Development tools
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.3",
+    "mypy>=1.8",
+]
+
+# Everything
+all = [
+    "controlpad[evdev]",
+    "controlpad[dev]",
+]
+
+# ---------------------------------------------------------------------------
+# Entry points — CLI tools
+# ---------------------------------------------------------------------------
+
+[project.scripts]
+controlpad = "controlpad.cli:main"
+
+# ---------------------------------------------------------------------------
+# Project URLs
+# ---------------------------------------------------------------------------
+
+[project.urls]
+Homepage      = "https://github.com/ranaweerasupun/controlpad"
+Repository    = "https://github.com/ranaweerasupun/controlpad"
+"Bug Tracker" = "https://github.com/ranaweerasupun/controlpad/issues"
+Changelog     = "https://github.com/ranaweerasupun/controlpad/blob/main/CHANGELOG.md"
+
+# ---------------------------------------------------------------------------
+# Tool configuration
+# ---------------------------------------------------------------------------
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["controlpad*"]
+
+[tool.pytest.ini_options]
+testpaths    = ["tests"]
+addopts      = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version         = "3.10"
+strict                 = false
+ignore_missing_imports = true
