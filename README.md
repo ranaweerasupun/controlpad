@@ -194,7 +194,7 @@ gp.playback(session)              # replays at real-time speed by default
 ### Playback options
 
 ```python
-# Real-time (default)
+# real-time (default)
 gp.playback(session, speed=1.0)
 
 # Double speed
