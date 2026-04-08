@@ -1,8 +1,0 @@
-#!/bin/sh
-'''exec' "/Users/supunakalanka/Documents/U/protfolio and git stuff/controlpad-lib-git/controlpad 2/publish_env/bin/python3.11" "$0" "$@"
-' '''
-import sys
-from docutils.core import rst2xetex
-if __name__ == '__main__':
-    sys.argv[0] = sys.argv[0].removesuffix('.exe')
-    sys.exit(rst2xetex())
