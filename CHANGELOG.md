@@ -9,7 +9,14 @@ controlpad uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+---
 
+## [0.2.1] — 2026-04-08
+
+### Added
+
+**Recording and playback**
+- The new changes were added to the README file.
 
 ---
 
